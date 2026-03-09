@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Idea Board</title>
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #60a5fa;
+            --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-light: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 2rem 1rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 1.5rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], select {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            outline: none;
+            flex: 1;
+            min-width: 200px;
+            color: #1e293b;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.8rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-add {
+            background: var(--primary-blue);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid var(--glass-border);
+            flex: 1;
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-count {
+            background: var(--primary-blue);
+            padding: 0.2rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+        }
+
+        #idea-list {
+            list-style: none;
+        }
+
+        .idea-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 0.8rem;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .idea-text {
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .idea-meta {
+            font-style: italic;
+            color: var(--secondary-blue);
+            font-weight: 500;
+        }
+
+        footer {
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: auto;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .form-row { flex-direction: column; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Group Idea Board</h1>
+    </header>
+
+    <main>
+        <section class="glass-card">
+            <div class="input-group">
+                <div class="form-row">
+                    <input type="text" id="idea-input" placeholder="Type your brilliant idea here..." aria-label="New idea">
+                    <select id="user-select" aria-label="Select user">
+                        <option value="Nimal">Nimal</option>
+                        <option value="Amal">Amal</option>
+                        <option value="Kasun">Kasun</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button class="btn-add" id="add-btn">Add Idea</button>
+                    <button class="btn-clear" id="clear-btn">Clear Input</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            Total Ideas: <span class="stats-count" id="total-count">0</span>
+        </section>
+
+        <ul id="idea-list">
+            <!-- Ideas will appear here -->
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Group Idea Board. Modern brainstorming made simple.</p>
+    </footer>
+
+    <script>
+        const ideaInput = document.getElementById('idea-input');
+        const userSelect = document.getElementById('user-select');
+        const addBtn = document.getElementById('add-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const ideaList = document.getElementById('idea-list');
+        const totalCountSpan = document.getElementById('total-count');
+
+        let totalIdeas = 0;
+
+        function updateCount() {
+            totalCountSpan.textContent = totalIdeas;
+        }
+
+        function addIdea() {
+            const ideaText = ideaInput.value.trim();
+            const userName = userSelect.value;
+
+            if (ideaText === "") {
+                alert("Please enter an idea first!");
+                return;
+            }
+
+            // Create list item
+            const li = document.createElement('li');
+            li.className = 'idea-item';
+            
+            li.innerHTML = `
+                <div class="idea-text">
+                    ${ideaText} <span class="idea-meta">– suggested by ${userName}</span>
+                </div>
+            `;
+
+            // Add to list
+            ideaList.prepend(li);
+
+            // Update stats
+            totalIdeas++;
+            updateCount();
+
+            // Reset input
+            ideaInput.value = "";
+            ideaInput.focus();
+        }
+
+        function clearInput() {
+            ideaInput.value = "";
+            ideaInput.focus();
+        }
+
+        // Event Listeners
+        addBtn.addEventListener('click', addIdea);
+        
+        clearBtn.addEventListener('click', clearInput);
+
+        // Allow "Enter" key to add idea
+        ideaInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addIdea();
+            }
+        });
+    </script>
+</body>
+</html>
