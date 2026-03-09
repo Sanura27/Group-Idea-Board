@@ -1,0 +1,33 @@
+Create a simple interactive web page called "Group Idea Board".
+
+Requirements:
+1. Use HTML, CSS, and JavaScript in a single file called index.html.
+2. The page should allow users to:
+   - Enter an idea in a text input field.
+   - Select a name from a dropdown list (example: Nimal, Amal, Kasun).
+   - Click an "Add Idea" button to add the idea to a list.
+
+3. When the button is clicked:
+   - The idea should appear in a list below the input.
+   - Display it in this format:
+     "Create a study planner – suggested by Nimal"
+
+4. Improve the visual design with:
+   - A modern layout with good spacing
+   - Blue color theme
+   - Glassmorphism (glass effect) card design
+   - Styled buttons
+   - Clear list layout for ideas
+
+5. Add additional UI elements:
+   - A header section with the title "Group Idea Board"
+   - A footer section
+   - A section showing the total number of ideas added
+   - A clear/reset button to clear the input field
+
+6. The interface should be clean, modern, and easy to use.
+
+7. Use only basic JavaScript (no frameworks).
+
+Output:
+Provide the full working code for index.html.
