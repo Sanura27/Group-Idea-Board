@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Toolkit | GPA & Study Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">Student<span>Toolkit</span></h1>
+            <ul class="nav-links">
+                <li><a href="#gpa-section">GPA Calculator</a></li>
+                <li><a href="#timer-section">Study Timer</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+        <main class="content">
+            <!-- GPA Calculator Section -->
+            <section id="gpa-section" class="card">
+                <h2>GPA Calculator</h2>
+                <p class="section-desc">Calculate your semester GPA by entering your course credits and grades.</p>
+                <div id="course-list">
+                    <div class="course-row header">
+                        <span>Course Name (Optional)</span>
+                        <span>Credits</span>
+                        <span>Grade</span>
+                        <span></span>
+                    </div>
+                    <!-- Default course rows -->
+                    <div class="course-row">
+                        <input type="text" placeholder="e.g. Mathematics" class="course-name">
+                        <input type="number" placeholder="Credits" class="course-credits" min="0" step="0.5">
+                        <select class="course-grade">
+                            <option value="4.0">A (4.0)</option>
+                            <option value="3.7">A- (3.7)</option>
+                            <option value="3.3">B+ (3.3)</option>
+                            <option value="3.0">B (3.0)</option>
+                            <option value="2.7">B- (2.7)</option>
+                            <option value="2.3">C+ (2.3)</option>
+                            <option value="2.0">C (2.0)</option>
+                            <option value="1.7">C- (1.7)</option>
+                            <option value="1.0">D (1.0)</option>
+                            <option value="0.0">F (0.0)</option>
+                        </select>
+                        <button class="btn-remove" onclick="removeRow(this)">×</button>
+                    </div>
+                </div>
+                <div class="gpa-actions">
+                    <button id="add-course" class="btn-secondary">Add Course</button>
+                    <button id="calculate-gpa" class="btn-primary">Calculate GPA</button>
+                </div>
+                <div id="gpa-result" class="result-display">
+                    Your GPA: <span id="gpa-value">0.00</span>
+                </div>
+            </section>
+
+            <!-- Study Timer Section -->
+            <section id="timer-section" class="card">
+                <h2>Study Timer</h2>
+                <p class="section-desc">Stay focused with a simple stopwatch timer.</p>
+                <div class="timer-display">
+                    <span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+                </div>
+                <div class="timer-controls">
+                    <button id="timer-start" class="btn-primary">Start</button>
+                    <button id="timer-pause" class="btn-secondary">Pause</button>
+                    <button id="timer-reset" class="btn-outline">Reset</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Upcoming Events</h3>
+            <div class="event-list">
+                <div class="event-card">
+                    <span class="event-date">Oct 15</span>
+                    <div class="event-info">
+                        <h4>Midterm Exams</h4>
+                        <p>Main Hall, 10:00 AM</p>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <span class="event-date">Oct 22</span>
+                    <div class="event-info">
+                        <h4>Project Submission</h4>
+                        <p>CS101 - Final Version</p>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <span class="event-date">Nov 05</span>
+                    <div class="event-info">
+                        <h4>Library Workshop</h4>
+                        <p>Research Skills 101</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
