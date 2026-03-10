@@ -175,6 +175,62 @@ button {
     background: #f1f1f1;
 }
 
+.btn-theme {
+    background: transparent;
+    padding: 8px;
+    font-size: 1.2rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+.btn-theme:hover {
+    background: var(--background);
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+    --background: #121212;
+    --card-bg: #1e1e1e;
+    --text: #e0e0e0;
+    --text-light: #a0a0a0;
+    --border: #333333;
+    --primary-dark: #90caf9;
+}
+
+body.dark-mode .btn-outline {
+    color: var(--text);
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #333333;
+}
+
+body.dark-mode .result-display {
+    background: #1a237e;
+    color: #90caf9;
+}
+
+body.dark-mode .event-date {
+    background: #2c2c2c;
+    color: var(--primary);
+}
+
+body.dark-mode .btn-remove {
+    background: #3d2626;
+}
+
+body.dark-mode input, body.dark-mode select {
+    background-color: #2c2c2c;
+    color: var(--text);
+    border-color: var(--border);
+}
+
 .btn-remove {
     background: #ffebee;
     color: var(--accent);
