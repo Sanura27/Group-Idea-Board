@@ -1,608 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Group Idea Board</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Georgia', serif;
-      padding: 24px;
-    }
-
-    #app { width: 100%; max-width: 680px; }
-
-    /* Header */
-    .header {
-      background: rgba(255,255,255,0.06);
-      border-radius: 20px 20px 0 0;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-bottom: none;
-      padding: 28px 36px 24px;
-      backdrop-filter: blur(16px);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .header-icon {
-      width: 48px; height: 48px; border-radius: 14px;
-      background: linear-gradient(135deg, #a78bfa, #7c3aed);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 4px 16px rgba(124,58,237,0.5);
-      flex-shrink: 0;
-    }
-    .header-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
-    .header-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 2px; }
-    .header-count { margin-left: auto; text-align: right; }
-    .header-count-num { font-size: 28px; font-weight: 800; color: #a78bfa; }
-    .header-count-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; }
-
-    /* Top banner */
-    #top-banner {
-      background: linear-gradient(90deg, rgba(167,139,250,0.2), rgba(124,58,237,0.15));
-      border: 1px solid rgba(167,139,250,0.3);
-      border-top: none; border-bottom: none;
-      padding: 10px 36px;
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px;
-    }
-    #top-banner.hidden { display: none; }
-    #top-banner-text { color: #c4b5fd; font-style: italic; }
-    #top-banner-votes { color: rgba(255,255,255,0.4); }
-
-    /* Input area */
-    .input-area {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-top: none; border-bottom: none;
-      padding: 20px 36px;
-      display: flex; gap: 12px; align-items: center;
-      backdrop-filter: blur(16px);
-      position: relative; z-index: 100;
-    }
-
-    /* Dropdown */
-    .dropdown-wrap { position: relative; z-index: 200; }
-    #dropdown-btn {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      color: rgba(255,255,255,0.4);
-      padding: 10px 14px;
-      cursor: pointer; font-size: 14px; font-family: 'Georgia', serif;
-      display: flex; align-items: center; gap: 8px; min-width: 170px;
-      transition: all 0.2s;
-    }
-    #dropdown-btn.selected { color: #fff; }
-    .dropdown-arrow { margin-left: auto; opacity: 0.5; }
-    .btn-avatar {
-      width: 22px; height: 22px; border-radius: 6px;
-      font-size: 11px; font-weight: 700; color: #fff;
-      display: inline-flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    #dropdown-menu {
-      position: absolute; top: calc(100% + 6px); left: 0; z-index: 9999;
-      background: #1e1b4b;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px; overflow: visible; min-width: 200px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.8);
-      display: none;
-    }
-    #dropdown-menu.open { display: block; }
-
-    .dropdown-item {
-      display: flex; align-items: center; gap: 10px; width: 100%;
-      padding: 10px 16px; background: transparent;
-      border: none; cursor: pointer; color: #fff; font-size: 14px;
-      font-family: 'Georgia', serif;
-      transition: background 0.15s; text-align: left;
-    }
-    .dropdown-item:hover { background: rgba(255,255,255,0.08); }
-    .dropdown-item .check { margin-left: auto; color: #a78bfa; font-size: 12px; }
-    .dropdown-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 4px 0; }
-
-    .add-member-btn {
-      display: flex; align-items: center; gap: 10px; width: 100%;
-      padding: 10px 16px; background: transparent;
-      border: none; cursor: pointer; color: #a78bfa; font-size: 14px;
-      font-family: 'Georgia', serif; transition: background 0.15s;
-    }
-    .add-member-btn:hover { background: rgba(167,139,250,0.1); }
-    .add-member-plus {
-      width: 26px; height: 26px; border-radius: 7px; font-size: 16px; font-weight: 700;
-      background: rgba(167,139,250,0.2); color: #a78bfa;
-      display: inline-flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    #add-member-form { padding: 10px 12px; display: none; flex-direction: column; gap: 6px; }
-    #add-member-form.open { display: flex; }
-    .add-member-row { display: flex; gap: 6px; }
-    #new-member-input {
-      flex: 1; background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px; color: #fff; padding: 7px 10px;
-      font-size: 13px; outline: none; font-family: 'Georgia', serif;
-    }
-    #new-member-input.error { border-color: #f87171; }
-    #add-member-submit {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-      border: none; border-radius: 8px; color: #fff;
-      padding: 7px 12px; cursor: pointer; font-size: 13px; font-weight: 700;
-      font-family: 'Georgia', serif;
-    }
-    #add-member-error { font-size: 11px; color: #f87171; padding-left: 2px; display: none; }
-
-    /* Text input */
-    #idea-input {
-      flex: 1; background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
-      color: #fff; padding: 10px 16px; font-size: 14px; outline: none;
-      font-family: 'Georgia', serif; transition: border-color 0.2s;
-    }
-    #idea-input:focus { border-color: rgba(167,139,250,0.6); }
-    #idea-input::placeholder { color: rgba(255,255,255,0.3); }
-
-    /* Buttons */
-    #clear-btn {
-      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px; color: rgba(255,255,255,0.4); padding: 10px 12px;
-      cursor: pointer; font-size: 16px; transition: all 0.2s;
-    }
-    #clear-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
-
-    #add-btn {
-      background: rgba(167,139,250,0.25);
-      border: none; border-radius: 10px; color: #fff;
-      padding: 10px 22px; font-weight: 700; font-size: 14px;
-      cursor: not-allowed; transition: all 0.2s; letter-spacing: 0.3px;
-      font-family: 'Georgia', serif;
-    }
-    #add-btn.active {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(124,58,237,0.5);
-    }
-
-    /* Divider */
-    .divider { height: 2px; background: linear-gradient(90deg, transparent, rgba(167,139,250,0.4), transparent); }
-
-    /* Ideas list */
-    #ideas-list {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-top: none; border-radius: 0 0 20px 20px;
-      backdrop-filter: blur(16px); overflow: hidden;
-    }
-
-    .empty-state {
-      padding: 48px 36px; text-align: center;
-      color: rgba(255,255,255,0.25); font-size: 15px;
-    }
-
-    .idea-row {
-      display: flex; align-items: center; gap: 16px;
-      padding: 16px 36px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: background 0.5s;
-    }
-    .idea-row:last-child { border-bottom: none; }
-    .idea-row.new-flash { background: rgba(167,139,250,0.1); }
-
-    .avatar {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800; color: #fff;
-    }
-
-    .idea-content { flex: 1; }
-    .idea-text { color: #f1f0ff; font-size: 15px; }
-    .idea-meta { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 3px; }
-    .idea-author { font-weight: 600; }
-    .idea-sep { margin: 0 6px; }
-
-    /* Edit mode */
-    .edit-row { display: flex; gap: 6px; align-items: center; }
-    .edit-input {
-      flex: 1; background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(167,139,250,0.5);
-      border-radius: 8px; color: #fff; padding: 6px 10px;
-      font-size: 14px; outline: none; font-family: 'Georgia', serif;
-    }
-    .save-btn {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-      border: none; border-radius: 7px; color: #fff;
-      padding: 6px 12px; cursor: pointer; font-size: 12px; font-weight: 700;
-      font-family: 'Georgia', serif;
-    }
-    .cancel-btn {
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 7px; color: rgba(255,255,255,0.5);
-      padding: 6px 10px; cursor: pointer; font-size: 12px;
-      font-family: 'Georgia', serif;
-    }
-
-    /* Action buttons */
-    .action-btns { display: flex; gap: 6px; align-items: center; }
-    .edit-btn, .delete-btn {
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; color: rgba(255,255,255,0.4); padding: 6px 9px;
-      cursor: pointer; font-size: 13px; transition: all 0.2s;
-    }
-    .edit-btn:hover { background: rgba(167,139,250,0.2); color: #a78bfa; border-color: rgba(167,139,250,0.4); }
-    .delete-btn:hover { background: rgba(239,68,68,0.2); color: #f87171; border-color: rgba(239,68,68,0.4); }
-
-    .vote-btn {
-      display: flex; flex-direction: column; align-items: center;
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px; padding: 6px 12px; cursor: pointer;
-      color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 700;
-      transition: all 0.2s; min-width: 44px; font-family: 'Georgia', serif;
-    }
-    .vote-btn.voted {
-      background: rgba(167,139,250,0.2); border-color: rgba(167,139,250,0.5);
-      color: #a78bfa; cursor: default;
-    }
-    .vote-arrow { font-size: 14px; }
-
-    /* Footer */
-    .footer {
-      text-align: center; padding: 16px 0 0;
-      color: rgba(255,255,255,0.2); font-size: 12px; letter-spacing: 0.5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Toolkit | GPA & Study Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="app">
-  <!-- Header -->
-  <div class="header">
-    <div class="header-icon">💡</div>
-    <div>
-      <div class="header-title">Group Idea Board</div>
-      <div class="header-sub">Collaborate · Brainstorm · Vote</div>
-    </div>
-    <div class="header-count">
-      <div class="header-count-num" id="idea-count">3</div>
-      <div class="header-count-label">ideas</div>
-    </div>
-  </div>
-
-  <!-- Top banner -->
-  <div id="top-banner">
-    <span>🔥</span>
-    <span style="color:rgba(255,255,255,0.6)">Top idea:</span>
-    <span id="top-banner-text"></span>
-    <span id="top-banner-votes"></span>
-  </div>
-
-  <!-- Input area -->
-  <div class="input-area">
-    <div class="dropdown-wrap" id="dropdown-wrap">
-      <button id="dropdown-btn" onclick="toggleDropdown()">
-        <span id="dropdown-label">Select your name…</span>
-        <span class="dropdown-arrow">▾</span>
-      </button>
-      <div id="dropdown-menu">
-        <div id="member-list"></div>
-        <div class="dropdown-divider"></div>
-        <button class="add-member-btn" id="add-member-toggle" onclick="toggleAddMemberForm()">
-          <span class="add-member-plus">+</span>
-          Add new member
-        </button>
-        <div id="add-member-form">
-          <div class="add-member-row">
-            <input type="text" id="new-member-input" placeholder="Enter name…"
-              oninput="clearMemberError()"
-              onkeydown="handleNewMemberKey(event)" />
-            <button id="add-member-submit" onclick="addMember()">Add</button>
-          </div>
-          <div id="add-member-error"></div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">Student<span>Toolkit</span></h1>
+            <ul class="nav-links">
+                <li><a href="#gpa-section">GPA Calculator</a></li>
+                <li><a href="#timer-section">Study Timer</a></li>
+            </ul>
         </div>
-      </div>
+    </nav>
+
+    <div class="main-layout">
+        <main class="content">
+            <!-- GPA Calculator Section -->
+            <section id="gpa-section" class="card">
+                <h2>GPA Calculator</h2>
+                <p class="section-desc">Calculate your semester GPA by entering your course credits and grades.</p>
+                <div id="course-list">
+                    <div class="course-row header">
+                        <span>Course Name (Optional)</span>
+                        <span>Credits</span>
+                        <span>Grade</span>
+                        <span></span>
+                    </div>
+                    <!-- Default course rows -->
+                    <div class="course-row">
+                        <input type="text" placeholder="e.g. Mathematics" class="course-name">
+                        <input type="number" placeholder="Credits" class="course-credits" min="0" step="0.5">
+                        <select class="course-grade">
+                            <option value="4.0">A (4.0)</option>
+                            <option value="3.7">A- (3.7)</option>
+                            <option value="3.3">B+ (3.3)</option>
+                            <option value="3.0">B (3.0)</option>
+                            <option value="2.7">B- (2.7)</option>
+                            <option value="2.3">C+ (2.3)</option>
+                            <option value="2.0">C (2.0)</option>
+                            <option value="1.7">C- (1.7)</option>
+                            <option value="1.0">D (1.0)</option>
+                            <option value="0.0">F (0.0)</option>
+                        </select>
+                        <button class="btn-remove" onclick="removeRow(this)">×</button>
+                    </div>
+                </div>
+                <div class="gpa-actions">
+                    <button id="add-course" class="btn-secondary">Add Course</button>
+                    <button id="calculate-gpa" class="btn-primary">Calculate GPA</button>
+                </div>
+                <div id="gpa-result" class="result-display">
+                    Your GPA: <span id="gpa-value">0.00</span>
+                </div>
+            </section>
+
+            <!-- Study Timer Section -->
+            <section id="timer-section" class="card">
+                <h2>Study Timer</h2>
+                <p class="section-desc">Stay focused with a simple stopwatch timer.</p>
+                <div class="timer-display">
+                    <span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+                </div>
+                <div class="timer-controls">
+                    <button id="timer-start" class="btn-primary">Start</button>
+                    <button id="timer-pause" class="btn-secondary">Pause</button>
+                    <button id="timer-reset" class="btn-outline">Reset</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Upcoming Events</h3>
+            <div class="event-list">
+                <div class="event-card">
+                    <span class="event-date">Oct 15</span>
+                    <div class="event-info">
+                        <h4>Midterm Exams</h4>
+                        <p>Main Hall, 10:00 AM</p>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <span class="event-date">Oct 22</span>
+                    <div class="event-info">
+                        <h4>Project Submission</h4>
+                        <p>CS101 - Final Version</p>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <span class="event-date">Nov 05</span>
+                    <div class="event-info">
+                        <h4>Library Workshop</h4>
+                        <p>Research Skills 101</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
 
-    <input type="text" id="idea-input" placeholder="Enter your idea here…"
-      oninput="updateAddBtn()" onkeydown="handleIdeaKey(event)" />
-
-    <button id="clear-btn" title="Clear" onclick="clearAll()">✕</button>
-    <button id="add-btn" onclick="addIdea()">Add Idea</button>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- Ideas list -->
-  <div id="ideas-list"></div>
-
-  <!-- Footer -->
-  <div class="footer" id="footer"></div>
-</div>
-
-<script>
-  const PALETTE = [
-    { accent: "#FF9800", dot: "#F57C00" },
-    { accent: "#9C27B0", dot: "#7B1FA2" },
-    { accent: "#43A047", dot: "#2E7D32" },
-    { accent: "#1E88E5", dot: "#1565C0" },
-    { accent: "#E91E63", dot: "#AD1457" },
-    { accent: "#00ACC1", dot: "#00838F" },
-    { accent: "#F4511E", dot: "#BF360C" },
-    { accent: "#8E24AA", dot: "#6A1B9A" },
-    { accent: "#039BE5", dot: "#0277BD" },
-    { accent: "#43A047", dot: "#1B5E20" },
-  ];
-
-  let members = ["Nimal", "Sara", "Alex", "Priya", "Jordan"];
-  let memberColors = {};
-  members.forEach((m, i) => memberColors[m] = PALETTE[i % PALETTE.length]);
-
-  let ideas = [
-    { id: 1, text: "Build a study planner",      author: "Nimal", timestamp: "2 min ago",  votes: 4 },
-    { id: 2, text: "Start a podcast",             author: "Sara",  timestamp: "5 min ago",  votes: 7 },
-    { id: 3, text: "Organize a coding workshop",  author: "Alex",  timestamp: "12 min ago", votes: 2 },
-  ];
-
-  let selectedName = "";
-  let voted = new Set();
-  let editingId = null;
-  let dropdownOpen = false;
-  let addMemberFormOpen = false;
-
-  const initials = name => name.slice(0, 2).toUpperCase();
-  const getColor = author => memberColors[author] || { accent: "#607D8B", dot: "#455A64" };
-
-  // ── Dropdown ──────────────────────────────────────────────
-  function toggleDropdown() {
-    dropdownOpen = !dropdownOpen;
-    document.getElementById("dropdown-menu").classList.toggle("open", dropdownOpen);
-    if (!dropdownOpen) closeAddMemberForm();
-  }
-
-  function closeDropdown() {
-    dropdownOpen = false;
-    document.getElementById("dropdown-menu").classList.remove("open");
-    closeAddMemberForm();
-  }
-
-  document.addEventListener("mousedown", e => {
-    if (!document.getElementById("dropdown-wrap").contains(e.target)) closeDropdown();
-  });
-
-  function selectMember(name) {
-    selectedName = name;
-    const c = getColor(name);
-    const btn = document.getElementById("dropdown-btn");
-    btn.classList.add("selected");
-    btn.innerHTML = `
-      <span class="btn-avatar" style="background:${c.accent}">${initials(name)}</span>
-      ${name}
-      <span class="dropdown-arrow">▾</span>`;
-    closeDropdown();
-    renderMembers();
-    updateAddBtn();
-  }
-
-  function renderMembers() {
-    const list = document.getElementById("member-list");
-    list.innerHTML = members.map(name => {
-      const c = getColor(name);
-      return `
-        <button class="dropdown-item" onclick="selectMember('${name}')">
-          <span class="btn-avatar" style="background:${c.accent}">${initials(name)}</span>
-          ${name}
-          ${selectedName === name ? '<span class="check">✓</span>' : ''}
-        </button>`;
-    }).join('');
-  }
-
-  // ── Add Member ────────────────────────────────────────────
-  function toggleAddMemberForm() {
-    addMemberFormOpen = !addMemberFormOpen;
-    const form = document.getElementById("add-member-form");
-    form.classList.toggle("open", addMemberFormOpen);
-    if (addMemberFormOpen) setTimeout(() => document.getElementById("new-member-input").focus(), 50);
-  }
-
-  function closeAddMemberForm() {
-    addMemberFormOpen = false;
-    document.getElementById("add-member-form").classList.remove("open");
-    document.getElementById("new-member-input").value = "";
-    clearMemberError();
-  }
-
-  function clearMemberError() {
-    document.getElementById("add-member-error").style.display = "none";
-    document.getElementById("new-member-input").classList.remove("error");
-  }
-
-  function handleNewMemberKey(e) {
-    if (e.key === "Enter") addMember();
-    if (e.key === "Escape") closeAddMemberForm();
-  }
-
-  function addMember() {
-    const input = document.getElementById("new-member-input");
-    const trimmed = input.value.trim();
-    const errEl = document.getElementById("add-member-error");
-
-    if (!trimmed) {
-      errEl.textContent = "Name cannot be empty.";
-      errEl.style.display = "block";
-      input.classList.add("error");
-      return;
-    }
-    if (members.map(m => m.toLowerCase()).includes(trimmed.toLowerCase())) {
-      errEl.textContent = "Member already exists!";
-      errEl.style.display = "block";
-      input.classList.add("error");
-      return;
-    }
-    memberColors[trimmed] = PALETTE[members.length % PALETTE.length];
-    members.push(trimmed);
-    closeAddMemberForm();
-    closeDropdown();
-    selectMember(trimmed);
-    renderMembers();
-  }
-
-  // ── Ideas ─────────────────────────────────────────────────
-  function updateAddBtn() {
-    const btn = document.getElementById("add-btn");
-    const hasInput = document.getElementById("idea-input").value.trim() !== "";
-    if (selectedName && hasInput) btn.classList.add("active");
-    else btn.classList.remove("active");
-  }
-
-  function handleIdeaKey(e) { if (e.key === "Enter") addIdea(); }
-
-  function addIdea() {
-    const input = document.getElementById("idea-input");
-    const text = input.value.trim();
-    if (!selectedName || !text) return;
-
-    const idea = { id: Date.now(), text, author: selectedName, timestamp: "just now", votes: 0 };
-    ideas.unshift(idea);
-    input.value = "";
-    updateAddBtn();
-    render();
-
-    // Flash highlight
-    setTimeout(() => {
-      const row = document.querySelector(`[data-id="${idea.id}"]`);
-      if (row) {
-        row.classList.add("new-flash");
-        setTimeout(() => row.classList.remove("new-flash"), 600);
-      }
-    }, 10);
-  }
-
-  function clearAll() {
-    document.getElementById("idea-input").value = "";
-    selectedName = "";
-    const btn = document.getElementById("dropdown-btn");
-    btn.classList.remove("selected");
-    btn.innerHTML = `<span id="dropdown-label">Select your name…</span><span class="dropdown-arrow">▾</span>`;
-    updateAddBtn();
-    renderMembers();
-  }
-
-  function voteIdea(id) {
-    if (voted.has(id)) return;
-    voted.add(id);
-    const idea = ideas.find(i => i.id === id);
-    if (idea) idea.votes++;
-    render();
-  }
-
-  function deleteIdea(id) {
-    ideas = ideas.filter(i => i.id !== id);
-    if (editingId === id) editingId = null;
-    render();
-  }
-
-  function startEdit(id) {
-    editingId = id;
-    render();
-    setTimeout(() => {
-      const inp = document.querySelector(`.edit-input[data-edit="${id}"]`);
-      if (inp) inp.focus();
-    }, 20);
-  }
-
-  function saveEdit(id) {
-    const inp = document.querySelector(`.edit-input[data-edit="${id}"]`);
-    const text = inp ? inp.value.trim() : "";
-    if (!text) return;
-    const idea = ideas.find(i => i.id === id);
-    if (idea) idea.text = text;
-    editingId = null;
-    render();
-  }
-
-  function cancelEdit() { editingId = null; render(); }
-
-  function handleEditKey(e, id) {
-    if (e.key === "Enter") saveEdit(id);
-    if (e.key === "Escape") cancelEdit();
-  }
-
-  // ── Render ────────────────────────────────────────────────
-  function render() {
-    // Idea count
-    document.getElementById("idea-count").textContent = ideas.length;
-
-    // Top banner
-    const banner = document.getElementById("top-banner");
-    if (ideas.length > 0) {
-      const top = [...ideas].sort((a, b) => b.votes - a.votes)[0];
-      banner.classList.remove("hidden");
-      document.getElementById("top-banner-text").textContent = `"${top.text}"`;
-      document.getElementById("top-banner-votes").textContent = `· ${top.votes} votes`;
-    } else {
-      banner.classList.add("hidden");
-    }
-
-    // Ideas list
-    const list = document.getElementById("ideas-list");
-    if (ideas.length === 0) {
-      list.innerHTML = `<div class="empty-state">No ideas yet. Be the first to share one! 💡</div>`;
-    } else {
-      list.innerHTML = ideas.map(idea => {
-        const c = getColor(idea.author);
-        const hasVoted = voted.has(idea.id);
-        const isEditing = editingId === idea.id;
-
-        const avatarStyle = `background: linear-gradient(135deg, ${c.accent}, ${c.dot}); box-shadow: 0 3px 10px ${c.accent}55`;
-
-        const contentHtml = isEditing
-          ? `<div class="edit-row">
-               <input class="edit-input" data-edit="${idea.id}" value="${idea.text.replace(/"/g, '&quot;')}"
-                 onkeydown="handleEditKey(event, ${idea.id})" />
-               <button class="save-btn" onclick="saveEdit(${idea.id})">Save</button>
-               <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
-             </div>`
-          : `<div class="idea-text">${idea.text}</div>
-             <div class="idea-meta">
-               <span class="idea-author" style="color:${c.accent}">${idea.author}</span>
-               <span class="idea-sep">·</span>${idea.timestamp}
-             </div>`;
-
-        const actionsHtml = isEditing ? '' : `
-          <div class="action-btns">
-            <button class="edit-btn" title="Edit" onclick="startEdit(${idea.id})">✏️</button>
-            <button class="delete-btn" title="Delete" onclick="deleteIdea(${idea.id})">🗑️</button>
-            <button class="vote-btn ${hasVoted ? 'voted' : ''}" onclick="voteIdea(${idea.id})">
-              <span class="vote-arrow">${hasVoted ? '▲' : '△'}</span>
-              <span>${idea.votes}</span>
-            </button>
-          </div>`;
-
-        return `
-          <div class="idea-row" data-id="${idea.id}">
-            <div class="avatar" style="${avatarStyle}">${initials(idea.author)}</div>
-            <div class="idea-content">${contentHtml}</div>
-            ${actionsHtml}
-          </div>`;
-      }).join('');
-    }
-
-    // Footer
-    document.getElementById("footer").textContent =
-      `Group Idea Board · ${ideas.length} idea${ideas.length !== 1 ? 's' : ''} · ${members.length} member${members.length !== 1 ? 's' : ''}`;
-  }
-
-  // Init
-  renderMembers();
-  render();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
