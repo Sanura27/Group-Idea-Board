@@ -1,110 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Toolkit | GPA & Study Timer</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for a modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UCSC Student Toolkit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">Student<span>Toolkit</span></h1>
-            <ul class="nav-links">
-                <li><a href="#gpa-section">GPA Calculator</a></li>
-                <li><a href="#timer-section">Study Timer</a></li>
-            </ul>
-        </div>
-    </nav>
 
-    <div class="main-layout">
-        <main class="content">
-            <!-- GPA Calculator Section -->
-            <section id="gpa-section" class="card">
-                <h2>GPA Calculator</h2>
-                <p class="section-desc">Calculate your semester GPA by entering your course credits and grades.</p>
-                <div id="course-list">
-                    <div class="course-row header">
-                        <span>Course Name (Optional)</span>
-                        <span>Credits</span>
-                        <span>Grade</span>
-                        <span></span>
-                    </div>
-                    <!-- Default course rows -->
-                    <div class="course-row">
-                        <input type="text" placeholder="e.g. Mathematics" class="course-name">
-                        <input type="number" placeholder="Credits" class="course-credits" min="0" step="0.5">
-                        <select class="course-grade">
-                            <option value="4.0">A (4.0)</option>
-                            <option value="3.7">A- (3.7)</option>
-                            <option value="3.3">B+ (3.3)</option>
-                            <option value="3.0">B (3.0)</option>
-                            <option value="2.7">B- (2.7)</option>
-                            <option value="2.3">C+ (2.3)</option>
-                            <option value="2.0">C (2.0)</option>
-                            <option value="1.7">C- (1.7)</option>
-                            <option value="1.0">D (1.0)</option>
-                            <option value="0.0">F (0.0)</option>
-                        </select>
-                        <button class="btn-remove" onclick="removeRow(this)">×</button>
-                    </div>
-                </div>
-                <div class="gpa-actions">
-                    <button id="add-course" class="btn-secondary">Add Course</button>
-                    <button id="calculate-gpa" class="btn-primary">Calculate GPA</button>
-                </div>
-                <div id="gpa-result" class="result-display">
-                    Your GPA: <span id="gpa-value">0.00</span>
-                </div>
-            </section>
-
-            <!-- Study Timer Section -->
-            <section id="timer-section" class="card">
-                <h2>Study Timer</h2>
-                <p class="section-desc">Stay focused with a simple stopwatch timer.</p>
-                <div class="timer-display">
-                    <span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
-                </div>
-                <div class="timer-controls">
-                    <button id="timer-start" class="btn-primary">Start</button>
-                    <button id="timer-pause" class="btn-secondary">Pause</button>
-                    <button id="timer-reset" class="btn-outline">Reset</button>
-                </div>
-            </section>
-        </main>
-
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h3>Upcoming Events</h3>
-            <div class="event-list">
-                <div class="event-card">
-                    <span class="event-date">Oct 15</span>
-                    <div class="event-info">
-                        <h4>Midterm Exams</h4>
-                        <p>Main Hall, 10:00 AM</p>
-                    </div>
-                </div>
-                <div class="event-card">
-                    <span class="event-date">Oct 22</span>
-                    <div class="event-info">
-                        <h4>Project Submission</h4>
-                        <p>CS101 - Final Version</p>
-                    </div>
-                </div>
-                <div class="event-card">
-                    <span class="event-date">Nov 05</span>
-                    <div class="event-info">
-                        <h4>Library Workshop</h4>
-                        <p>Research Skills 101</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="navbar-logo" href="#">
+    <div class="logo-img">UC</div>
+    <span class="logo-text">UCSC <span>Hub</span></span>
+  </a>
+  <div class="navbar-links">
+    <button class="nav-btn active" onclick="showSection('gpa', this)">GPA Calculator</button>
+    <button class="nav-btn" onclick="showSection('timer', this)">Study Timer</button>
+    <button class="nav-btn" onclick="showSection('ideas', this)">Idea Board</button>
+  </div>
+  <div class="navbar-right">
+    <div class="toggle-wrap">
+      <span>🌙</span>
+      <button class="toggle" id="darkToggle" onclick="toggleDark()" aria-label="Toggle dark mode"></button>
     </div>
+  </div>
+</nav>
 
-    <script src="script.js"></script>
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Upcoming Events</div>
+    <div class="event-item">
+      <div class="event-badge">Mar 17</div>
+      <div class="event-body">
+        <div class="event-name">Midterm Exams</div>
+        <div class="event-date">Main Hall, 10:00 AM</div>
+      </div>
+    </div>
+    <div class="event-item">
+      <div class="event-badge">Mar 25</div>
+      <div class="event-body">
+        <div class="event-name">Spring Registration</div>
+        <div class="event-date">Online Portal</div>
+      </div>
+    </div>
+    <div class="event-item">
+      <div class="event-badge">Apr 2</div>
+      <div class="event-body">
+        <div class="event-name">Project Deadline</div>
+        <div class="event-date">CS101 - Final Version</div>
+      </div>
+    </div>
+    <div class="event-item">
+      <div class="event-badge">Apr 10</div>
+      <div class="event-body">
+        <div class="event-name">Career Fair</div>
+        <div class="event-date">Engineering Building</div>
+      </div>
+    </div>
+    <div class="event-item">
+      <div class="event-badge">May 27</div>
+      <div class="event-body">
+        <div class="event-name">Final Exams</div>
+        <div class="event-date">Main Hall</div>
+      </div>
+    </div>
+    <div class="event-item">
+      <div class="event-badge">Jun 14</div>
+      <div class="event-body">
+        <div class="event-name">Graduation Ceremony</div>
+        <div class="event-date">University Grounds</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- GPA CALCULATOR -->
+    <section class="section active" id="section-gpa">
+      <div class="section-heading">GPA Calculator</div>
+      <p class="section-sub">Enter your courses, credits, and letter grades to compute your semester GPA.</p>
+      <div class="card">
+        <div class="course-header">
+          <span class="col-label">Course Name</span>
+          <span class="col-label">Credits</span>
+          <span class="col-label">Grade</span>
+          <span></span>
+        </div>
+        <div id="courseList"></div>
+        <button class="btn btn-gold btn-sm" onclick="addCourse()" style="margin-top:8px">+ Add Course</button>
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="calculateGPA()">Calculate GPA</button>
+          <button class="btn btn-danger btn-sm" onclick="clearAll()" style="align-self:center">Clear All</button>
+        </div>
+        <div class="gpa-result" id="gpaResult">
+          <div class="gpa-number" id="gpaNumber">0.00</div>
+          <div class="gpa-letter" id="gpaLetter">—</div>
+          <div class="gpa-label">Cumulative GPA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDY TIMER -->
+    <section class="section" id="section-timer">
+      <div class="section-heading">Study Timer</div>
+      <p class="section-sub">Stay focused with a simple stopwatch timer.</p>
+      <div class="card" style="max-width:420px;margin:0 auto;">
+        <div class="timer-wrapper">
+          <div class="timer-ring">
+            <svg width="260" height="260" viewBox="0 0 260 260">
+              <circle class="ring-bg" cx="130" cy="130" r="118"/>
+              <circle class="ring-progress" id="ringProgress" cx="130" cy="130" r="118"
+                stroke-dasharray="741.4" stroke-dashoffset="741.4"/>
+            </svg>
+            <div class="ring-inner">
+              <div class="timer-display" id="timerDisplay">00:00</div>
+              <div class="timer-subtitle" id="timerStatus">Ready</div>
+            </div>
+          </div>
+          <div class="session-dots" id="sessionDots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="timer-controls">
+            <button class="btn btn-primary" id="startBtn" onclick="startTimer()">▶ Start</button>
+            <button class="btn" id="pauseBtn" onclick="pauseTimer()" style="background:var(--surface2);color:var(--text)" disabled>⏸ Pause</button>
+            <button class="btn btn-gold" onclick="resetTimer()">↺ Reset</button>
+          </div>
+          <div class="notification-banner" id="notifBanner">
+            🎉 Session complete! Great work!
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IDEA BOARD -->
+    <section class="section" id="section-ideas">
+      <div class="section-heading">Student Idea Board</div>
+      <p class="section-sub">Share ideas, vote for the best ones, and collaborate with your group.</p>
+      <div class="ib-top-bar hidden" id="ibTopBar">
+        <span>🔥</span>
+        <span style="color:var(--text-muted)">Top idea:</span>
+        <span class="ib-top-text" id="ibTopText"></span>
+        <span class="ib-top-votes" id="ibTopVotes"></span>
+      </div>
+      <div class="ib-input-row">
+        <div class="ib-dropdown-wrap" id="ibDropWrap">
+          <button id="ibDropBtn" onclick="ibToggleDrop()">
+            <span id="ibDropLabel">Select your name…</span>
+            <span class="ib-drop-arrow">▾</span>
+          </button>
+          <div id="ibDropMenu">
+            <div id="ibMemberList"></div>
+            <div class="ib-divider"></div>
+            <button class="ib-add-mem-btn" onclick="ibToggleAddForm()">
+              <span class="ib-add-plus">+</span>
+              Add new member
+            </button>
+            <div id="ibAddMemForm">
+              <div class="ib-mem-row">
+                <input type="text" id="ibNewMemInput" placeholder="Enter name…"
+                  oninput="ibClearMemErr()" onkeydown="ibNewMemKey(event)" />
+                <button id="ibAddMemSubmit" onclick="ibAddMember()">Add</button>
+              </div>
+              <div id="ibMemError"></div>
+            </div>
+          </div>
+        </div>
+        <input type="text" id="ibIdeaInput" placeholder="Type your idea here…"
+          oninput="ibUpdateBtn()" onkeydown="ibIdeaKey(event)" />
+        <button id="ibAddBtn" onclick="ibAddIdea()">+ Add Idea</button>
+      </div>
+      <div class="ib-list" id="ibList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
