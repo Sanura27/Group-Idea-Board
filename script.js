@@ -74,23 +74,34 @@
   // Init with 3 rows
   addCourse(); addCourse(); addCourse();
 
-  /* ─── STUDY TIMER (Stopwatch) ─── */
+  /* ─── STUDY TIMER (Countdown) ─── */
   let timerInterval = null;
-  let secondsElapsed = 0;
+  let secondsRemaining = 25 * 60; // 25 minutes countdown
   let running = false;
   let sessionsCompleted = 0;
   const CIRCUMFERENCE = 741.4;
-  const SESSION_MAX = 25 * 60; // visual ring fills over 25 min
+  const SESSION_MAX = 25 * 60; // 25 min total
 
   function updateDisplay() {
-    const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-    const s = (secondsElapsed % 60).toString().padStart(2, '0');
+    const m = Math.floor(secondsRemaining / 60).toString().padStart(2, '0');
+    const s = (secondsRemaining % 60).toString().padStart(2, '0');
     document.getElementById('timerDisplay').textContent = `${m}:${s}`;
 
-    // Ring fills up as time passes (up to 25 min max fill)
-    const pct = Math.min(secondsElapsed / SESSION_MAX, 1);
+    // Ring empties as time counts down (full to empty)
+    const pct = Math.max(secondsRemaining / SESSION_MAX, 0);
     const offset = CIRCUMFERENCE * (1 - pct);
     document.getElementById('ringProgress').style.strokeDashoffset = offset;
+
+    // Turn urgent red when less than 1 minute
+    const display = document.getElementById('timerDisplay');
+    const ring = document.getElementById('ringProgress');
+    if (secondsRemaining < 60 && secondsRemaining > 0) {
+      display.classList.add('urgent');
+      ring.classList.add('urgent');
+    } else {
+      display.classList.remove('urgent');
+      ring.classList.remove('urgent');
+    }
   }
 
   function startTimer() {
@@ -98,19 +109,25 @@
     running = true;
     document.getElementById('startBtn').disabled = true;
     document.getElementById('pauseBtn').disabled = false;
-    document.getElementById('timerStatus').textContent = 'Focus!';
+    document.getElementById('timerStatus').textContent = 'Counting down...';
     document.getElementById('notifBanner').classList.remove('show');
 
     timerInterval = setInterval(() => {
-      secondsElapsed++;
+      secondsRemaining--;
       updateDisplay();
-      // Every 25 min mark a session dot
-      if (secondsElapsed % SESSION_MAX === 0) {
-        const dots = document.querySelectorAll('#sessionDots .dot');
-        if (sessionsCompleted < dots.length) dots[sessionsCompleted].classList.add('done');
-        sessionsCompleted = (sessionsCompleted + 1) % dots.length;
-        if (sessionsCompleted === 0) dots.forEach(d => d.classList.remove('done'));
+      
+      // When timer reaches 0
+      if (secondsRemaining <= 0) {
+        clearInterval(timerInterval); timerInterval = null; running = false;
+        secondsRemaining = 0;
+        updateDisplay();
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('pauseBtn').disabled = true;
+        document.getElementById('timerStatus').textContent = 'Time\'s up!';
+        document.getElementById('notifBanner').textContent = '🎉 Session complete! Great work!';
         document.getElementById('notifBanner').classList.add('show');
+        
+        // Play completion sound
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           [0, 0.25, 0.5].forEach(t => {
@@ -137,7 +154,7 @@
 
   function resetTimer() {
     clearInterval(timerInterval); timerInterval = null; running = false;
-    secondsElapsed = 0;
+    secondsRemaining = 25 * 60;
     updateDisplay();
     document.getElementById('startBtn').disabled = false;
     document.getElementById('pauseBtn').disabled = true;
