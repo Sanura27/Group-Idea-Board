@@ -20,19 +20,46 @@
     'F': 0.0
   };
 
+  // Auto-assign grade based on credits
+  function assignGradeByCredits(credits) {
+    const creditVal = parseFloat(credits);
+    if (isNaN(creditVal) || creditVal <= 0) return '';
+    if (creditVal >= 4.0) return 'A+';
+    if (creditVal >= 3.7) return 'A-';
+    if (creditVal >= 3.3) return 'B+';
+    if (creditVal >= 3.0) return 'B';
+    if (creditVal >= 2.7) return 'B-';
+    if (creditVal >= 2.3) return 'C+';
+    if (creditVal >= 2.0) return 'C';
+    if (creditVal >= 1.3) return 'D';
+    if (creditVal >= 1.0) return 'D';
+    return 'F';
+  }
+
   function createCourseRow(index) {
     const row = document.createElement('div');
     row.className = 'course-row';
     row.id = 'row-' + index;
     row.innerHTML = `
       <input class="inp" type="text" placeholder="e.g. Mathematics" />
-      <input class="inp" type="number" placeholder="Credits" min="0" max="6" step="0.5" />
-      <select class="inp">
+      <input class="inp credit-input" type="number" placeholder="Credits" min="0" max="4" step="0.5" 
+        onchange="autoAssignGrade(this)" />
+      <select class="inp grade-select">
         ${Object.keys(gradePoints).map(g => `<option value="${g}">${g}</option>`).join('')}
       </select>
       <button class="remove-row" onclick="removeRow('row-${index}')">×</button>
     `;
     return row;
+  }
+
+  function autoAssignGrade(creditInput) {
+    const row = creditInput.closest('.course-row');
+    const credits = creditInput.value;
+    const gradeSelect = row.querySelector('.grade-select');
+    const assignedGrade = assignGradeByCredits(credits);
+    if (assignedGrade) {
+      gradeSelect.value = assignedGrade;
+    }
   }
 
   let rowIndex = 0;
@@ -248,6 +275,22 @@
     const inp=document.getElementById('ibIdeaInput');
     const text=inp.value.trim();
     if (!ibSelected||!text) return;
+    
+    // Check word count (max 50 words)
+    const wordCount = text.split(/\s+/).length;
+    if (wordCount > 50) {
+      alert(`Your idea has ${wordCount} words. Maximum is 50 words.`);
+      return;
+    }
+    
+    // Check for duplicate ideas (case-insensitive)
+    const textLower = text.toLowerCase();
+    const isDuplicate = ibIdeas.some(idea => idea.text.toLowerCase() === textLower);
+    if (isDuplicate) {
+      alert('This idea already exists. Please submit a different idea.');
+      return;
+    }
+    
     const idea={id:Date.now(),text,author:ibSelected,time:'just now',votes:0};
     ibIdeas.unshift(idea);
     inp.value=''; ibUpdateBtn(); ibRender();
